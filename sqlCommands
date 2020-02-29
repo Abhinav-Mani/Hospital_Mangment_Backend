@@ -1,0 +1,10 @@
+NOTE:- This is mySQL commonds might vary from ORACLE
+
+create database hospital;
+
+use hospital;
+
+create table receptionist (
+	Username varchar(50) primary key,
+    Pass varchar(256) NOT NULL
+);
