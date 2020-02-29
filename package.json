@@ -1,0 +1,17 @@
+{
+  "name": "medical-clinic-managment-system",
+  "version": "1.0.0",
+  "description": "A rest api to handle various Medical clinic managment",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx nodemon server.js"
+  },
+  "author": "Abhinav Mani",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1"
+  }
+}
