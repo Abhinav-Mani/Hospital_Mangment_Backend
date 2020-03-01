@@ -23,6 +23,10 @@ module.exports.receptionist_get=(req,res)=>{
 module.exports.SignUP=(req,res)=>{
     let username=req.body.username;
     let password=req.body.password;
+    if(!username||!password){
+        res.status(400);
+        res.json({error:"Missing Parameter"});
+    }
     bcryptjs.hash(password,salRounds).then(hash=>{
         createUser(hash);
     }).catch(err=>{
@@ -62,6 +66,10 @@ module.exports.SignUP=(req,res)=>{
 module.exports.SignIn = (req,res)=>{
     let username=req.body.username;
     let password=req.body.password;
+    if(!username||!password){
+        res.status(400);
+        res.json({error:"Missing Parameter"});
+    }
     signIn();
     async function signIn(){
         let connection;
@@ -69,6 +77,10 @@ module.exports.SignIn = (req,res)=>{
             connection=await (await pool).getConnection();
             result=await connection
             .execute("SELECT * FROM RECEPTIONIST WHERE USERNAME = (:1)",[username]);
+            if(result.rows.length===0){
+                res.status(401);
+                res.json({error:"Username or Password is Wrong"});
+            }
             let hashPassword=result.rows[0][1];
             console.log(hashPassword+" "+password);
             let bool= await bcryptjs.compare(password,hashPassword);
