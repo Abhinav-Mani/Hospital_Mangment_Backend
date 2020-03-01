@@ -9,5 +9,6 @@ const controler=require("../controllers/receptionist")
 route.get ("/",authCheck,controler.receptionist_get);
 route.post("/",controler.SignUP);
 route.post("/signin",controler.SignIn);
+route.patch("/",controler.ChangePassword);
 
 module.exports =route;

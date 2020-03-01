@@ -17,7 +17,8 @@ module.exports.receptionist_get=(req,res)=>{
             res.json({error:err});
         }
     }
-    getall();
+    //getall();
+    res.send(req.user);
 }
 
 module.exports.SignUP=(req,res)=>{
@@ -82,7 +83,7 @@ module.exports.SignIn = (req,res)=>{
                 res.json({error:"Username or Password is Wrong"});
             }
             let hashPassword=result.rows[0][1];
-            console.log(hashPassword+" "+password);
+
             let bool= await bcryptjs.compare(password,hashPassword);
             if(bool){
                 res.status(200);
@@ -93,6 +94,50 @@ module.exports.SignIn = (req,res)=>{
                     process.env.ACCESS_TOKEN_SECRET
                 );
                 res.json({accessToken:accessToken});
+            }else{
+                res.status(401);
+                res.json({error:"Username or Password is Wrong"});
+            }
+        }catch(err){
+            res.status(500);
+            res.send({error:"ISE"});
+        }
+    }
+}
+
+module.exports.ChangePassword = (req,res)=>{
+    let username=req.body.username;
+    let oldpassword=req.body.oldpassword;
+    let newpassword=req.body.newpassword;
+    if(!username||!oldpassword||!newpassword){
+        res.status(400);
+        console.log(username+" "+oldpassword+" "+newpassword);
+        return res.json({error:"Missing Parameter"});
+    }
+    bcryptjs.hash(newpassword,salRounds).then(hash=>{
+        changePass(hash);
+    }).catch(err=>{
+        res.json({error:"Internal Server Error"}).status(500);
+    })
+    
+    async function changePass(newHashPassword){
+        let connection;
+        try{
+            connection=await (await pool).getConnection();
+            result=await connection
+            .execute("SELECT * FROM RECEPTIONIST WHERE USERNAME = (:1)",[username]);
+            if(result.rows.length===0){
+                res.status(401);
+                res.json({error:"Username or Password is Wrong"});
+            }
+            let hashPassword=result.rows[0][1];
+            let bool= await bcryptjs.compare(oldpassword,hashPassword);
+            if(bool){
+                await connection
+                .execute("UPDATE RECEPTIONIST SET pass = (:1) WHERE username=(:2)",[newHashPassword,username]);
+                await connection.commit();
+                res.status(201);
+                res.send({status:"Password Changed"});
             }else{
                 res.status(401);
                 res.json({error:"Username or Password is Wrong"});
