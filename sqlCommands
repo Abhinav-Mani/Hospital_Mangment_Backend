@@ -4,3 +4,8 @@ create table receptionist (
 	Username varchar(50) primary key,
     Pass varchar(256) NOT NULL
 );
+
+create table doctor (
+	Username varchar2(256) primary key,
+    Pass varchar(256) NOT NULL
+);
