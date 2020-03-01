@@ -5,6 +5,6 @@ const route=express.Router();
 const controler=require("../controllers/receptionist")
 
 route.get("/",controler.receptionist_get);
-//route.post("/",);
+route.post("/",controler.SignUP);
 
 module.exports =route;
