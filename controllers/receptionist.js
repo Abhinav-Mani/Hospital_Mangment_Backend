@@ -1,4 +1,5 @@
 const bcryptjs=require("bcryptjs");
+const jwt=require("jsonwebtoken");
 
 require("dotenv").config();
 
@@ -42,7 +43,13 @@ module.exports.SignUP=(req,res)=>{
             .execute("INSERT INTO RECEPTIONIST (USERNAME,PASS) VALUES (:1,:2)",[username,hash]);
             await connection.commit();
             res.status(201);
-            res.json({status:"Sucess"});
+            let accessToken=jwt.sign({
+                user:username,
+                post:"RECEPTIONIST"
+            },
+                process.env.ACCESS_TOKEN_SECRET
+            );
+            res.json({accessToken:accessToken});
         }
         catch(err){
             console.log(err);
@@ -50,4 +57,37 @@ module.exports.SignUP=(req,res)=>{
             res.status(500);
         }
     } 
+}
+
+module.exports.SignIn = (req,res)=>{
+    let username=req.body.username;
+    let password=req.body.password;
+    signIn();
+    async function signIn(){
+        let connection;
+        try{
+            connection=await (await pool).getConnection();
+            result=await connection
+            .execute("SELECT * FROM RECEPTIONIST WHERE USERNAME = (:1)",[username]);
+            let hashPassword=result.rows[0][1];
+            console.log(hashPassword+" "+password);
+            let bool= await bcryptjs.compare(password,hashPassword);
+            if(bool){
+                res.status(200);
+                let accessToken=jwt.sign({
+                    user:username,
+                    post:"RECEPTIONIST"
+                },
+                    process.env.ACCESS_TOKEN_SECRET
+                );
+                res.json({accessToken:accessToken});
+            }else{
+                res.status(401);
+                res.json({error:"Username or Password is Wrong"});
+            }
+        }catch(err){
+            res.status(500);
+            res.send({error:"ISE"});
+        }
+    }
 }

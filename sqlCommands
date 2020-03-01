@@ -1,8 +1,4 @@
-NOTE:- This is mySQL commonds might vary from ORACLE
-
-create database hospital;
-
-use hospital;
+NOTE:- This is ORACLE commonds might vary from mySQL 
 
 create table receptionist (
 	Username varchar(50) primary key,
