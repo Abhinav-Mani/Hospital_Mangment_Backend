@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const crypto=require("crypto");
+const validator=require("validator");
 
 const pool=require("../util/database");
 const mailer=require("../util/Mailer")
@@ -12,6 +13,15 @@ exports.AddPatient=(req,res)=>{
     if(!firstName||!lastName||!email){
         res.status(400)
         return res.json({error:"Missing Parameter"});
+    }else if(!validator.isEmail(email)){
+        res.status(400);
+        return res.json({error:"Not an Email"});
+    }else if(!validator.isLength(firstName,{min:5,max:70})||!validator.isAlpha(firstName)){
+        res.status(400);
+        return res.json({error:"Not a proper first name"});
+    }else if(!validator.isLength(lastName,{min:5,max:70})||!validator.isAlpha(lastName)){
+        res.status(400);
+        return res.json({error:"Not a proper last name"});
     }
     let id=crypto.randomBytes(8).toString('hex');
     addPatient();

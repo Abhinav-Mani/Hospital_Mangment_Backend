@@ -24,9 +24,9 @@ module.exports.receptionist_get=(req,res)=>{
 module.exports.SignUP=(req,res)=>{
     let username=req.body.username;
     let password=req.body.password;
-    if(!username||!password){
+    if(!username||!password||!validator.isLength(username,{min:5,max:70})||!validator.isLength(password,{min:5,max:70})){
         res.status(400);
-        res.json({error:"Missing Parameter"});
+        return res.json({error:"Bad Request"});
     }
     bcryptjs.hash(password,salRounds).then(hash=>{
         createUser(hash);
