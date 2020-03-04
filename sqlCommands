@@ -2,15 +2,22 @@ NOTE:- This is ORACLE commonds might vary from mySQL
 
 create table receptionist (
 	Username varchar(50) primary key,
-    Pass varchar(256) NOT NULL
+    Pass varchar2(256) NOT NULL
 );
 
 create table doctor (
 	Username varchar2(256) primary key,
-    Pass varchar(256) NOT NULL
+    Pass varchar2(256) NOT NULL
 );
 
 create table Pharmacist (
 	Username varchar2(256) primary key,
-    Pass varchar(256) NOT NULL
+    Pass varchar2(256) NOT NULL
+);
+
+create table Patient (
+	PATIENT_ID varchar2(256) primary key,
+    FIRST_NAME varchar2(256) NOT NULL,
+    LAST_NAME varchar2(256) NOT NULL,
+    EMAIL varchar2(256) NOT NULL UNIQUE     
 );
