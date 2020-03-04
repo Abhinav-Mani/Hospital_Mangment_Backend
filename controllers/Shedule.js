@@ -28,3 +28,19 @@ exports.Schedule=(req,res)=>{
     }
 
 }
+
+exports.PatientList=(req,res)=>{
+    getAllPatient();
+    async function getAllPatient(){
+        let connection;
+        try{
+            connection=await (await pool).getConnection();
+            let result=await connection.execute("SELECT * FROM Schedule where trunc(SCHEDULE_TIME)=trunc(sysdate)");
+            res.status(200);
+            return res.json(result.rows);
+        }catch(err){
+            res.status(500);
+            return res.json(err);
+        }
+    }
+}
