@@ -10,6 +10,7 @@ exports.AddPatient=(req,res)=>{
     let firstName=req.body.firstName;
     let lastName=req.body.lastName;
     let email=req.body.email;
+    // /^[\w\.\-]+\@[\w]{2,5}\.[\w]{2,3}$/.test(email)
     if(!firstName||!lastName||!email){
         res.status(400)
         return res.json({error:"Missing Parameter"});
@@ -41,4 +42,44 @@ exports.AddPatient=(req,res)=>{
         }
     }
 
+}
+
+exports.search=(req,res)=>{
+    let id=req.query.id;
+    let name=req.query.name;
+    if(!name){
+        name='%';
+    }
+    name=name+'%';
+    if(!id){
+        SearchByName();
+    }else{
+        SearchById();
+    }
+    async function SearchByName(){
+        let connection;
+        try{
+            connection= await (await pool).getConnection();
+            console.log(name);
+            let result=await connection.execute("SELECT * FROM patient where lower(FIRST_NAME) LIKE lower((:1)) OR lower(LAST_NAME) LIKE lower((:1))",[name])
+            res.status(200);
+            return res.json(result.rows);
+        }catch(err){
+            res.status(500);
+            return res.json(err);
+        }
+    }
+    async function SearchById(){
+        let connection;
+        try{
+            connection= await (await pool).getConnection();
+            console.log(name);
+            let result=await connection.execute("SELECT * FROM patient where PATIENT_ID = (:1)",[id])
+            res.status(200);
+            return res.json(result.rows);
+        }catch(err){
+            res.status(500);
+            return res.json(err);
+        }
+    }
 }
