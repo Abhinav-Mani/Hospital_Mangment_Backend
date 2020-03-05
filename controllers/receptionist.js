@@ -1,5 +1,6 @@
 const bcryptjs=require("bcryptjs");
 const jwt=require("jsonwebtoken");
+const validator=require("validator");
 
 require("dotenv").config();
 
