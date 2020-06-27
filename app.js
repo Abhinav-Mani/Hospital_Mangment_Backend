@@ -1,14 +1,21 @@
 const express = require("express");
 const bodyParser =require("body-parser");
 
-const app=express();
-
 const receptionist=require("./routes/Receptionist");
 const doctor=require("./routes/Doctor");
 const pharmacist=require("./routes/Pharmacist");
 const patient=require("./routes/Patient");
 const shedule=require("./routes/Shedule");
 const medicine=require("./routes/Medicine");
+
+const app=express();
+
+app.use((req,res,next)=>{
+    res.header('Access-Control-Allow-Origin', "*");
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+})
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));

@@ -55,11 +55,15 @@ module.exports.SignUP=(req,res)=>{
 }
 
 module.exports.SignIn = (req,res)=>{
+    if(!req.body){
+        res.status(400);
+        return res.json({error:"Missing Parameter"});
+    }
     let username=req.body.username;
     let password=req.body.password;
     if(!username||!password){
         res.status(400);
-        res.json({error:"Missing Parameter"});
+        return res.json({error:"Missing Parameter"});
     }
     signIn();
     async function signIn(){
@@ -70,7 +74,7 @@ module.exports.SignIn = (req,res)=>{
             .execute("SELECT * FROM DOCTOR WHERE USERNAME = (:1)",[username]);
             if(result.rows.length===0){
                 res.status(401);
-                res.json({error:"Username or Password is Wrong"});
+                return res.json({error:"Username or Password is Wrong"});
             }
             let hashPassword=result.rows[0][1];
 
@@ -83,14 +87,14 @@ module.exports.SignIn = (req,res)=>{
                 },
                     process.env.ACCESS_TOKEN_SECRET
                 );
-                res.json({accessToken:accessToken});
+                return res.json({accessToken:accessToken});
             }else{
                 res.status(401);
-                res.json({error:"Username or Password is Wrong"});
+                return res.json({error:"Username or Password is Wrong"});
             }
         }catch(err){
             res.status(500);
-            res.send({error:"ISE"});
+            return res.send({error:"ISE"});
         }
     }
 }
