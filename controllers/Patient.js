@@ -10,6 +10,9 @@ exports.AddPatient=(req,res)=>{
     let firstName=req.body.firstName;
     let lastName=req.body.lastName;
     let email=req.body.email;
+    let phoneNo=req.body.phoneNo;
+    let dob = req.body.dob;
+    let gender = req.body.gender;
     // /^[\w\.\-]+\@[\w]{2,5}\.[\w]{2,3}$/.test(email)
     if(!firstName||!lastName||!email){
         res.status(400)
@@ -17,21 +20,22 @@ exports.AddPatient=(req,res)=>{
     }else if(!validator.isEmail(email)){
         res.status(400);
         return res.json({error:"Not an Email"});
-    }else if(!validator.isLength(firstName,{min:5,max:70})||!validator.isAlpha(firstName)){
+    }else if(!validator.isLength(firstName,{min:3,max:70})||!validator.isAlpha(firstName)){
         res.status(400);
         return res.json({error:"Not a proper first name"});
-    }else if(!validator.isLength(lastName,{min:5,max:70})||!validator.isAlpha(lastName)){
+    }else if(!validator.isLength(lastName,{min:3,max:70})||!validator.isAlpha(lastName)){
         res.status(400);
         return res.json({error:"Not a proper last name"});
     }
     let id=crypto.randomBytes(8).toString('hex');
     addPatient();
+    dob=dob.split(' ')[0];
     async function addPatient(){
         let connection;
         try{
             connection=await (await pool).getConnection();
             await connection.execute
-            ("INSERT INTO Patient (PATIENT_ID,FIRST_NAME,LAST_NAME,EMAIL) VALUES ((:1),(:2),(:3),(:4))",[id,firstName,lastName,email]);
+            ("INSERT INTO Patient (PATIENT_ID,FIRST_NAME,LAST_NAME,EMAIL,PHONENO,SEX,DATEOFBIRTH) VALUES ((:1),(:2),(:3),(:4),(:5),(:6),TO_DATE((:7),'YYYY-MM-DD') )",[id,firstName,lastName,email,phoneNo,gender,dob]);
             await connection.commit();
             await mailer.send(email,id);
             res.status(201);
@@ -39,6 +43,7 @@ exports.AddPatient=(req,res)=>{
         }catch(error){
             res.status(500);
             res.json(error);
+            console.log(error);
         }
     }
 

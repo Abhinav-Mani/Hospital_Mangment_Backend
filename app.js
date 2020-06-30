@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser =require("body-parser");
+const morgan = require("morgan");
 
 const receptionist=require("./routes/Receptionist");
 const doctor=require("./routes/Doctor");
@@ -13,9 +14,10 @@ const app=express();
 app.use((req,res,next)=>{
     res.header('Access-Control-Allow-Origin', "*");
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Headers', '*');
     next();
 })
+app.use(morgan("dev"));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));

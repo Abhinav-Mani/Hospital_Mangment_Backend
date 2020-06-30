@@ -93,6 +93,7 @@ module.exports.SignIn = (req,res)=>{
                 return res.json({error:"Username or Password is Wrong"});
             }
         }catch(err){
+            console.log((await pool)._logStats());
             res.status(500);
             return res.send({error:"ISE"});
         }
