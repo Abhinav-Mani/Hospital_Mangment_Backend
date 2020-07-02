@@ -6,9 +6,23 @@ require("dotenv").config();
 
 let salRounds=Number(process.env.SALT_ROUND);
 
-const pool= require("../util/database")
+const pool= require("../util/database");
+const { json } = require("body-parser");
+
 module.exports.Doctor_get=(req,res)=>{
-    res.send(req.user);
+    getDoctor();
+    async function getDoctor(){
+        try{
+            let connection = await (await pool).getConnection();
+            let result =await connection.execute("SELECT * FROM DOCTOR");
+            res.status(200);
+            return res.json(result.rows);
+        }catch (err){
+            res.status(400);
+            console.log(err);
+            return res.json({err});
+        }
+    }
 }
 
 module.exports.SignUP=(req,res)=>{
