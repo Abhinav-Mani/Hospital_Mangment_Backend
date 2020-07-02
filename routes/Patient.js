@@ -7,6 +7,6 @@ const controller=require("../controllers/Patient");
 const route=express.Router();
 
 route.post("/",authCheck,isReceptionist,controller.AddPatient);
-route.get("/",authCheck,controller.search);
+route.post("/search",authCheck,controller.search);
 
 module.exports=route;

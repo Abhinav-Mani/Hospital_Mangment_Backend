@@ -6,6 +6,8 @@ const validator=require("validator");
 const pool=require("../util/database");
 const mailer=require("../util/Mailer")
 
+const serchQuerry="SELECT * FROM patient where lower(FIRST_NAME) LIKE lower((:1)) AND lower(LAST_NAME) LIKE lower((:2)) AND patient_id LIKE ((:3)) AND email like ((:4)) AND phoneno like ((:5)) AND dateofbirth like ((:6))"
+
 exports.AddPatient=(req,res)=>{
     let firstName=req.body.firstName;
     let lastName=req.body.lastName;
@@ -50,43 +52,26 @@ exports.AddPatient=(req,res)=>{
 }
 
 exports.search=(req,res)=>{
-    let id=req.query.id;
-    let name=req.query.name;
-    if(!name){
-        name='%';
-    }
-    name=name+'%';
-    if(!id){
-        SearchByName();
-    }else{
-        SearchById();
-    }
-    async function SearchByName(){
+    let uid=req.body.uid||"%";
+    let firstName=req.body.firstName||"%";
+    let email=req.body.email||"%";
+    let dob=req.body.dob||"%";
+    let lastName=req.body.lastName||"%";
+    let phoneNo = req.body.phoneNo||"%";
+    Search()
+    async function Search(){
         let connection;
         try{
             connection= await (await pool).getConnection();
-            console.log(name);
-            let result=await connection.execute("SELECT * FROM patient where lower(FIRST_NAME) LIKE lower((:1)) OR lower(LAST_NAME) LIKE lower((:1))",[name])
+            let result=await 
+            connection.execute(serchQuerry,[firstName,lastName,uid,email,phoneNo,dob])
             res.status(200);
             return res.json(result.rows);
         }catch(err){
             res.status(500);
+            console.log(err);
             return res.json(err);
         }
     }
-    async function SearchById(){
-        let connection;
-        try{
-            connection= await (await pool).getConnection();
-            console.log(name);
-            let result=await connection.execute("SELECT * FROM patient where PATIENT_ID = (:1)",[id])
-            res.status(200);
-            return res.json(result.rows);
-        }catch(err){
-            res.status(500);
-            return res.json(err);
-        }
-    }
-
 }
 
