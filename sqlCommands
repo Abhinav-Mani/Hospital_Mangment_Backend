@@ -31,7 +31,7 @@ create table Schedule (
 );
 
 create table Schedule (
-    SCHEDULE_TIME DATE DEFAULT sysdate not null,
+    SCHEDULE_DATE DATE DEFAULT sysdate not null,
     STATUS INTEGER DEFAULT 0,
     QUEUE_NO INTEGER NOT NULL,
     PATIENT_ID VARCHAR2(256),
