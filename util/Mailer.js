@@ -36,3 +36,26 @@ exports.send= (email,key) => {
         }
     })
 }
+
+exports.sendAppointmentDetails= (email,message) => {
+    const text =
+    `${message}
+    ${footer}
+    `
+
+    const options = {
+        from: process.env.EMAIL_ADDRESS,
+        to: email,
+        subject: `Apointment Details`,
+        text: text,
+        //html: `<b>Hello world!</b>`
+    }
+
+    transporter.sendMail(options, (err, info) => {
+        if (!err) {
+            console.log(`Sent welcome email to ${email}`)
+        } else {
+            console.log(process.env.EMAIL_PASSWORD+"nodemailer failed"+process.env.EMAIL_ADDRESS, err)
+        }
+    })
+}

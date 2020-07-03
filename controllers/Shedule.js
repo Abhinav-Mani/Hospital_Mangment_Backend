@@ -3,6 +3,7 @@ require("dotenv").config();
 const validator=require("validator");
 
 const pool=require("../util/database");
+const mailer=require("../util/Mailer");
 
 exports.Schedule=(req,res)=>{
     let id=req.body.id;
@@ -20,6 +21,7 @@ exports.Schedule=(req,res)=>{
             if(rowCount<1){
                 return res.send({Message:"No Such Patient Exists"});
             }
+            const email=result.rows[0][3];
             result=await connection.execute("SELECT * FROM Schedule where trunc(SCHEDULE_DATE)=trunc(TO_DATE((:1),'YYYY-MM-DD')) AND PATIENT_ID=((:2))",[date,id]);
             rowCount=result.rows.length;
             if(rowCount>=1){
@@ -35,7 +37,9 @@ exports.Schedule=(req,res)=>{
             .execute("INSERT INTO Schedule (QUEUE_NO,PATIENT_ID,Doctor_id,SCHEDULE_DATE) VALUES ((:1),(:2),(:3),trunc(TO_DATE((:4),'YYYY-MM-DD')))",[rowCount,id,doctor,date]);
             await connection.commit();
             res.status(200);
-            return res.json({Message:`Your Token no for day ${date} is ${rowCount}`});
+            const message=`Your Token no for day ${date} is ${rowCount}`;
+            await mailer.sendAppointmentDetails(email,message);
+            return res.json({Message:message});
         }catch(err){
             res.status(500);
             return res.json(err);
