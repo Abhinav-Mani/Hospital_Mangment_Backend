@@ -30,6 +30,7 @@ exports.UPDATE=(req,res)=>{
     let price=Number( req.body.price );
     let amount=Number( req.body.amount );
     let min =Number(req.body.min);
+    console.log(name+" "+price+" "+amount+" "+min);
     updateMedicine();
     async function updateMedicine(){
         let connection;
@@ -47,11 +48,12 @@ exports.UPDATE=(req,res)=>{
 }
 
 exports.DELETE=(req,res)=>{
-    let name = req.body.name;
+    let name = req.query.name;
     removeMedicine();
     async function removeMedicine(){
         let connection;
         try{
+            console.log(name);
             connection= await (await pool).getConnection();
             await connection.execute("DELETE FROM Medicince WHERE MEDICINE_NAME=(:1)",[name]);
             await connection.commit();
