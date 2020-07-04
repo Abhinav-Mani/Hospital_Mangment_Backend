@@ -8,13 +8,14 @@ exports.ADD=(req,res)=>{
     let name = req.body.name;
     let price=Number( req.body.price );
     let amount=Number( req.body.amount );
+    let min = Number( req.body.min );
     addMedicine();
     async function addMedicine(){
         let connection;
         try{
             connection= await (await pool).getConnection();
-            await connection.execute("INSERT INTO Medicince (MEDICINE_NAME,AMOUNT,PRICE) VALUES ((:1),(:2),(:3))",[name,amount,price]);
-            await connection.commit();
+            await connection.execute("INSERT INTO Medicince (MEDICINE_NAME,AMOUNT,PRICE,WARNING_LIMIT) VALUES ((:1),(:2),(:3),(:4))",[name,amount,price,min]);
+            await connection.commit(); 
             res.status(200);
             return res.json({result:"Added"});
         }catch(err){

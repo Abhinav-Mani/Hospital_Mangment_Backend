@@ -45,3 +45,6 @@ Create table Medicince(
     AMOUNT INTEGER NOT NULL,
     PRICE INTEGER NOT NULL
 )
+
+ALTER TABLE Medicince 
+ADD warning_limit int NOT NULL;

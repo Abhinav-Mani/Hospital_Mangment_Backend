@@ -49,12 +49,13 @@ exports.Schedule=(req,res)=>{
 }
 
 exports.PatientList=(req,res)=>{
+    let doctor=req.user.user;
     getAllPatient();
     async function getAllPatient(){
         let connection;
         try{
             connection=await (await pool).getConnection();
-            let result=await connection.execute("SELECT * FROM Schedule where trunc(SCHEDULE_TIME)=trunc(sysdate)");
+            let result=await connection.execute("SELECT * FROM Schedule natural join Patient WHERE schedule.doctor_id=(:1) and trunc(schedule.schedule_date)=trunc(sysdate)",[doctor]);
             res.status(200);
             return res.json(result.rows);
         }catch(err){
