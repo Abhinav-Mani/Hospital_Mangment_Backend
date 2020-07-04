@@ -29,12 +29,13 @@ exports.UPDATE=(req,res)=>{
     let name = req.body.name;
     let price=Number( req.body.price );
     let amount=Number( req.body.amount );
+    let min =Number(req.body.min);
     updateMedicine();
     async function updateMedicine(){
         let connection;
         try{
             connection= await (await pool).getConnection();
-            await connection.execute("UPDATE Medicince SET AMOUNT=(:1),PRICE=(:2) WHERE MEDICINE_NAME=(:3)",[amount,price,name]);
+            await connection.execute("UPDATE Medicince SET AMOUNT=(:1),PRICE=(:2),WARNING_LIMIT=(:3) WHERE MEDICINE_NAME=(:4)",[amount,price,min,name]);
             await connection.commit();
             res.status(200);
             return res.json({result:"Updated"});
