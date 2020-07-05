@@ -7,15 +7,13 @@ exports.ADD_PRESCRIPTION=(req,res)=>{
     async function addPrescription(med){
         try{
             let connection=await (await pool).getConnection();
-            console.log("connection set");
-            console.log(list);
             for(let i=0;i<list.length;i++){
                 med=list[i];
                 await connection.execute("INSERT INTO prescription VALUES ((:1),(:2),(:3))",[id,med,0]);
             }
-            res.send("sucess");
+            res.status(201);
         }catch(err){
-            console.log(err);
+            res.status(500);
             res.send({message:"failed"});
         }
     }
