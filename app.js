@@ -9,6 +9,7 @@ const patient=require("./routes/Patient");
 const shedule=require("./routes/Shedule");
 const medicine=require("./routes/Medicine");
 const email=require("./routes/Email");
+const prescription=require("./routes/prescription");
 
 const app=express();
 
@@ -30,6 +31,7 @@ app.use("/patient",patient);
 app.use("/shedule",shedule);
 app.use("/medicine",medicine);
 app.use("/email",email);
+app.use("/prescription",prescription);
 
 app.get("*",(req,res)=>{
     res.send("<h1>404</h1><p>Invalid Route</p>")
