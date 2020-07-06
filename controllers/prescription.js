@@ -11,6 +11,7 @@ exports.ADD_PRESCRIPTION=(req,res)=>{
                 med=list[i];
                 await connection.execute("INSERT INTO prescription VALUES ((:1),(:2),(:3))",[id,med,0]);
             }
+            await connection.commit();
             res.status(201);
         }catch(err){
             res.status(500);
@@ -18,4 +19,19 @@ exports.ADD_PRESCRIPTION=(req,res)=>{
         }
     }
     //res.send("Prescription Route");
+}
+
+exports.GET_PRESCRIPTIONS=(req,res)=>{
+    getPrescriptions()
+    async function getPrescriptions(){
+        try{
+            let connection = await (await pool).getConnection();
+            let results = await connection.execute("SELECT * FROM prescription");
+            res.status(200);
+            res.json(results.rows);
+        }catch(err){
+            res.status(500);
+            res.json(err);
+        }
+    }
 }
