@@ -24,14 +24,20 @@ exports.ADD_PRESCRIPTION=(req,res)=>{
 exports.GET_PRESCRIPTIONS=(req,res)=>{
     getPrescriptions()
     async function getPrescriptions(){
+       let connection;
         try{
-            let connection = await (await pool).getConnection();
-            let results = await connection.execute("SELECT * FROM prescription");
+            connection = await (await pool).getConnection();
+            let results = await connection.execute("SELECT * FROM prescription pr join patient p on (pr.patient=p.patient_id) join medicince m on (m.medicine_name=pr.medicine_name)");
             res.status(200);
             res.json(results.rows);
         }catch(err){
             res.status(500);
             res.json(err);
+            console.log(err);
+        }finally{
+            if(connection){
+                connection.close();
+            }
         }
     }
 }
